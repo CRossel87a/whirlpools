@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::{self, Mint, Token, TokenAccount};
 
-use crate::{state::*, util::mint_position_token_with_metadata_and_remove_authority};
+use crate::{state::*};
 
 use crate::constants::nft::whirlpool_nft_update_auth::ID as WP_NFT_UPDATE_AUTH;
 
@@ -62,33 +62,4 @@ pub struct OpenPositionWithMetadata<'info> {
 /*
   Opens a new Whirlpool Position with Metadata account.
 */
-pub fn handler(
-    ctx: Context<OpenPositionWithMetadata>,
-    _bumps: OpenPositionWithMetadataBumps,
-    tick_lower_index: i32,
-    tick_upper_index: i32,
-) -> Result<()> {
-    let whirlpool = &ctx.accounts.whirlpool;
-    let position_mint = &ctx.accounts.position_mint;
-    let position = &mut ctx.accounts.position;
 
-    position.open_position(
-        whirlpool,
-        position_mint.key(),
-        tick_lower_index,
-        tick_upper_index,
-    )?;
-
-    mint_position_token_with_metadata_and_remove_authority(
-        whirlpool,
-        position_mint,
-        &ctx.accounts.position_token_account,
-        &ctx.accounts.position_metadata_account,
-        &ctx.accounts.metadata_update_auth,
-        &ctx.accounts.funder,
-        &ctx.accounts.metadata_program,
-        &ctx.accounts.token_program,
-        &ctx.accounts.system_program,
-        &ctx.accounts.rent,
-    )
-}
